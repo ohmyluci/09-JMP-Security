@@ -1,5 +1,6 @@
 package com.lucidiovacas.security.jmptask.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -19,5 +20,7 @@ public class User {
     private String username;
     private String email;
     private String password;
+    @Column(columnDefinition = "integer default 0")
+    private Integer failureLoginAttempts;
 
 }

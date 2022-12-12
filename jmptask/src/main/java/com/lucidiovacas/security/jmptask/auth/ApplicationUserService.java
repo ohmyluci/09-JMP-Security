@@ -16,10 +16,16 @@ public class ApplicationUserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepo;
 
+    @Autowired
+    private LoginAttemptService loginAttemptService;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepo.findByUsername(username);
-        log.info(user.getUsername());
+        if (loginAttemptService.isBlocked(username)) {
+            log.info("User {} blocked", username);
+        }
+
         if(user == null) {
             throw new UsernameNotFoundException(username);
         }

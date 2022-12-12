@@ -8,7 +8,7 @@ import java.util.List;
 public class MockData {
 
     public static final List<User> USERS = Arrays.asList(
-            new User(1L, "lucidio@email.com", "lucidio_vj", "mypass"),
-            new User(2L, "paula@email.com", "paula_pm", "herpass")
+            new User(1L, "lucidio@email.com", "lucidio_vj", "mypass", 0),
+            new User(2L, "paula@email.com", "paula_pm", "herpass", 0)
     );
 }
