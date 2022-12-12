@@ -1,8 +1,10 @@
 package com.lucidiovacas.security.jmptask.config;
 
+import com.lucidiovacas.security.jmptask.auth.ApplicationUserService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -12,31 +14,44 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
+@Slf4j
 public class WebSecurityConfig {
+
+//    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private ApplicationUserService applicationUserService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests((authz) -> authz
-                        .anyRequest().authenticated()
-                )
-                .formLogin(Customizer.withDefaults())
-                .logout();
+                .csrf().disable()
+                .authorizeHttpRequests()
+                .anyRequest().authenticated()
+                .and()
+                .httpBasic();
         return http.build();
     }
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> {
-            web.ignoring().requestMatchers("/api/v1/open-metrics/*");
+            web.ignoring().requestMatchers("index", "/api/v1/open-metrics/*", "/login", "/api/v1/user/*");
         };
     }
+
+//    @Bean
+//    public DaoAuthenticationProvider authenticationProvider() {
+//        final DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+//        authProvider.setUserDetailsService(applicationUserService);
+//        authProvider.setPasswordEncoder(new BCryptPasswordEncoder(11));
+//        return authProvider;
+//
+//    }
+    
 
     @Bean
     public InMemoryUserDetailsManager userDetailsService() {
@@ -59,5 +74,6 @@ public class WebSecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 
 }
